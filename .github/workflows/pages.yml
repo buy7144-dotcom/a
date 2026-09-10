@@ -1,0 +1,47 @@
+name: Deploy Mobile Briefing PWA
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare site
+        run: |
+          set -euo pipefail
+          mkdir -p site
+          curl -fL 'https://drive.google.com/uc?export=download&id=17jwcRNibfmOVBgawUOcEAzMzVnwamF5F' -o site/index.html
+          curl -fL 'https://drive.google.com/uc?export=download&id=1YHxvjnDX4xMVkk5fR3nWWraFfZaJKxZx' -o site/style.css
+          curl -fL 'https://drive.google.com/uc?export=download&id=1zB34xv41gOuQW40bdB8rCqXMUInRTe5U' -o site/app.js
+          curl -fL 'https://drive.google.com/uc?export=download&id=1vXSG3ts0naUkzXtuSl7d7G0c7M9Ri5nd' -o site/data.json
+          curl -fL 'https://drive.google.com/uc?export=download&id=1ov1nLI3x3Yoe6rZwF3Drb0IZUNyUyJlt' -o site/manifest.webmanifest
+          curl -fL 'https://drive.google.com/uc?export=download&id=19qqhC0u9C8BXjG2zF2DfOfDd4E2X_hKt' -o site/service-worker.js
+          curl -fL 'https://drive.google.com/uc?export=download&id=19hkLWsaBPMazL4vmFMwO_VF6HIACtBYN' -o site/icon.svg
+          touch site/.nojekyll
+          test -s site/index.html
+          test -s site/app.js
+          test -s site/data.json
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
