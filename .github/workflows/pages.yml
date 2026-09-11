@@ -21,14 +21,41 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Prepare site
+      - name: Prepare installable PWA
         run: |
           set -euo pipefail
           mkdir -p site
           curl -fL 'https://drive.google.com/uc?export=download&id=1kJuQmgxj4Hr3KUwrQlwFwp9klDBTpaKn' -o site/index.html
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('site/index.html')
+          t=p.read_text(encoding='utf-8')
+          head='''\n<link rel="manifest" href="./manifest.webmanifest">\n<link rel="icon" type="image/svg+xml" href="./icon.svg">\n<link rel="apple-touch-icon" href="./icon.svg">\n<meta name="mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-title" content="실무 브리핑">\n<meta name="application-name" content="실무 브리핑">\n'''
+          if 'manifest.webmanifest' not in t:
+              t=t.replace('<title>실무 브리핑</title>','<title>실무 브리핑</title>'+head)
+          reg='''\n<script>\nif ('serviceWorker' in navigator) { window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{})); }\n</script>\n'''
+          if "serviceWorker.register('./service-worker.js')" not in t:
+              t=t.replace('</body>',reg+'</body>')
+          p.write_text(t,encoding='utf-8')
+          manifest={
+            'name':'실무 브리핑 지식 허브','short_name':'실무 브리핑',
+            'description':'AI·엑셀 자동화 / 자동차·품질·SQ / 다이캐스팅·제조기술 실무 지식 허브',
+            'start_url':'./','scope':'./','display':'standalone',
+            'background_color':'#f3f7fb','theme_color':'#173f72','orientation':'portrait-primary',
+            'icons':[{'src':'./icon.svg','sizes':'any','type':'image/svg+xml','purpose':'any maskable'}]
+          }
+          Path('site/manifest.webmanifest').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
+          Path('site/icon.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b4b91"/><stop offset="1" stop-color="#12a0b0"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="url(#g)"/><rect x="54" y="54" width="404" height="404" rx="88" fill="none" stroke="#fff" stroke-width="10" opacity=".95"/><path d="M118 142c55-23 103-19 138 9v220c-38-26-83-30-138-10V142zm276 0c-55-23-103-19-138 9v220c38-26 83-30 138-10V142z" fill="#fff"/><path d="M256 151v220" stroke="#0b4b91" stroke-width="7" opacity=".35"/><text x="256" y="430" text-anchor="middle" font-family="sans-serif" font-size="46" font-weight="700" fill="#fff">실무 브리핑</text></svg>''',encoding='utf-8')
+          Path('site/service-worker.js').write_text('''const CACHE="briefing-pwa-final-v2";const ASSETS=["./","./index.html","./manifest.webmanifest","./icon.svg"];self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting();});self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))));self.clients.claim();});self.addEventListener("fetch",e=>{if(e.request.method!=="GET")return;e.respondWith(fetch(e.request).then(r=>{const cp=r.clone();caches.open(CACHE).then(c=>c.put(e.request,cp));return r;}).catch(()=>caches.match(e.request).then(r=>r||caches.match("./index.html"))));});''',encoding='utf-8')
+          PY
           touch site/.nojekyll
           test -s site/index.html
+          test -s site/manifest.webmanifest
+          test -s site/service-worker.js
+          test -s site/icon.svg
           grep -q 'Copilot Custom Skills' site/index.html
+          grep -q 'manifest.webmanifest' site/index.html
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
