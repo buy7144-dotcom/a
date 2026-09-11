@@ -25,21 +25,20 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p site
-          curl -fL 'https://drive.google.com/uc?export=download&id=17jwcRNibfmOVBgawUOcEAzMzVnwamF5F' -o site/index.html
-          curl -fL 'https://drive.google.com/uc?export=download&id=1YHxvjnDX4xMVkk5fR3nWWraFfZaJKxZx' -o site/style.css
-          curl -fL 'https://drive.google.com/uc?export=download&id=1zB34xv41gOuQW40bdB8rCqXMUInRTe5U' -o site/app.js
-          curl -fL 'https://drive.google.com/uc?export=download&id=1vXSG3ts0naUkzXtuSl7d7G0c7M9Ri5nd' -o site/data.json
-          curl -fL 'https://drive.google.com/uc?export=download&id=1ov1nLI3x3Yoe6rZwF3Drb0IZUNyUyJlt' -o site/manifest.webmanifest
-          curl -fL 'https://drive.google.com/uc?export=download&id=19qqhC0u9C8BXjG2zF2DfOfDd4E2X_hKt' -o site/service-worker.js
-          curl -fL 'https://drive.google.com/uc?export=download&id=19hkLWsaBPMazL4vmFMwO_VF6HIACtBYN' -o site/icon.svg
+          curl -fL 'https://drive.google.com/uc?export=download&id=1XNdezdj6OVyD0w-XZfrv9bfhrJXjfXcd' -o site/index.html
+          curl -fL 'https://drive.google.com/uc?export=download&id=1Pwbcjd9_ztODM7ifDaMv7WFODwLRk9xj' -o site/style.css
+          curl -fL 'https://drive.google.com/uc?export=download&id=1SzmMhct03A2ZvDzRGzGVtcPE_mqP4Gbi' -o site/app.js
+          curl -fL 'https://drive.google.com/uc?export=download&id=16U14kBe1frZycAdXQmeSdcOwnAVTzAoa' -o site/data.json
+          curl -fL 'https://drive.google.com/uc?export=download&id=1b49LQIRSWwxE9ondwBBfgwF_OWkHndyY' -o site/manifest.webmanifest
+          curl -fL 'https://drive.google.com/uc?export=download&id=17SsCYszwrHkNIBcwxtb9hPxd_ClmXuRE' -o site/service-worker.js
+          curl -fL 'https://drive.google.com/uc?export=download&id=1q-5Gylur6VF8L03jCEroicUaSGyH7quV' -o site/icon.svg
           touch site/.nojekyll
           test -s site/index.html
+          test -s site/style.css
           test -s site/app.js
           test -s site/data.json
       - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
