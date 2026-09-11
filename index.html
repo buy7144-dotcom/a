@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#173f72">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>실무 브리핑</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header>
+  <div class="hrow"><div><div class="title">실무 브리핑</div><div class="sub">AI·엑셀 / 자동차·품질·SQ / 다이캐스팅·제조기술</div></div><button id="install" class="install">앱 설치</button></div>
+  <div class="search"><input id="q" type="search" placeholder="PFMEA, 기공, Copilot, 리턴재 검색"><button id="qClear">×</button></div>
+  <div class="stats"><span id="sTotal" class="stat">전체 0</span><span id="sAdded" class="stat">추가 0</span><span id="sFav" class="stat">★ 0</span><span id="syncState" class="stat">로컬 저장</span></div>
+</header>
+
+<div class="filters">
+  <div class="scrollrow">
+    <button class="fbtn active" data-cat="전체">전체</button>
+    <button class="fbtn" data-cat="AI·엑셀 자동화">AI·엑셀</button>
+    <button class="fbtn" data-cat="자동차·품질·SQ">품질·SQ</button>
+    <button class="fbtn" data-cat="다이캐스팅·제조기술">다이캐스팅</button>
+  </div>
+  <div class="scrollrow" id="tagrow"></div>
+</div>
+
+<main>
+  <div class="sectionhead"><h2 id="viewTitle">지식 카드</h2><span id="count">0개</span></div>
+  <div id="cards" class="cards"></div>
+  <div id="empty" class="empty">표시할 내용이 없습니다.</div>
+</main>
+
+<nav class="bottom">
+  <button class="nav active" data-view="home"><i>⌂</i><span>홈</span></button>
+  <button class="nav" data-view="favorites"><i>★</i><span>즐겨찾기</span></button>
+  <button class="nav" data-view="add"><i>＋</i><span>추가</span></button>
+  <button class="nav" data-view="tools"><i>⚙</i><span>도구</span></button>
+</nav>
+
+<div class="sheetbg" id="addSheet"><div class="sheet">
+  <div class="shead"><h3>새 브리핑 추가</h3><button class="close" data-close="addSheet">✕</button></div>
+  <div class="sbody">
+    <div class="tabs"><button class="tab active" data-tab="paste">붙여넣기</button><button class="tab" data-tab="manual">직접 입력</button></div>
+    <div class="panel active" id="panel-paste">
+      <div class="field"><label>ChatGPT 브리핑 전체</label><textarea id="pasteText"></textarea></div>
+      <button id="savePaste" class="btn primary" style="width:100%">분석 후 저장</button>
+    </div>
+    <div class="panel" id="panel-manual">
+      <div class="field"><label>주제</label><select id="fCat"><option>AI·엑셀 자동화</option><option>자동차·품질·SQ</option><option>다이캐스팅·제조기술</option></select></div>
+      <div class="field"><label>제목</label><input id="fTitle"></div>
+      <div class="field"><label>태그(쉼표)</label><input id="fTags"></div>
+      <div class="field"><label>핵심 변화</label><textarea id="fChange"></textarea></div>
+      <div class="field"><label>현장/업무 적용 포인트</label><textarea id="fApply"></textarea></div>
+      <div class="field"><label>주의할 점</label><textarea id="fCaution"></textarea></div>
+      <div class="field"><label>바로 실행 체크(한 줄 하나)</label><textarea id="fChecks"></textarea></div>
+      <div class="field"><label>출처명</label><input id="fSource"></div>
+      <div class="field"><label>출처 URL</label><input id="fUrl"></div>
+      <button id="saveManual" class="btn primary" style="width:100%">저장</button>
+    </div>
+  </div>
+</div></div>
+
+<div class="sheetbg" id="toolsSheet"><div class="sheet">
+  <div class="shead"><h3>도구</h3><button class="close" data-close="toolsSheet">✕</button></div>
+  <div class="sbody">
+    <div class="syncbox"><b>PC ↔ 휴대폰 동기화</b><p>현재 ver02는 공용 DB 연결 준비 구조입니다. 다음 단계에서 Supabase URL/키만 연결하면 동일 DB 사용이 가능합니다.</p></div>
+    <div class="toolgrid">
+      <div class="tool"><b>최근 본 내용</b><p>최근 펼쳐본 카드 30개</p><button id="showRecent" class="btn soft">보기 <span id="recentN">0</span></button></div>
+      <div class="tool"><b>앱 설치</b><p>HTTPS 배포 후 Android Chrome에서 설치</p><button id="installTool" class="btn soft">설치</button></div>
+      <div class="tool"><b>JSON 백업</b><p>추가 카드·즐겨찾기·최근 본 내용 저장</p><button id="backup" class="btn soft">백업</button></div>
+      <div class="tool"><b>JSON 복원</b><p>백업 파일 불러오기</p><button id="restore" class="btn soft">복원</button><input id="restoreFile" type="file" accept=".json" hidden></div>
+    </div>
+  </div>
+</div></div>
+
+<div id="toast" class="toast"></div>
+<script src="./app.js"></script>
+</body>
+</html>
